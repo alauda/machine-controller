@@ -2,7 +2,6 @@ module k8c.io/machine-controller
 
 go 1.22.7
 
-toolchain go1.23.1
 
 require (
 	cloud.google.com/go/logging v1.11.0

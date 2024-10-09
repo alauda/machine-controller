@@ -170,7 +170,7 @@ echo "All partitions on ${disks} have been wiped."
 `
 	return Action{
 		Name:    "wipe-disk",
-		Image:   "alpine:3.18",
+		Image:   "registry.alauda.cn:60070/ops/alpine:3.20",
 		Timeout: 600,
 		Command: []string{"/bin/sh", "-c", wipeScript},
 	}
@@ -184,7 +184,7 @@ func createStreamUbuntuImageAction(destDisk, osImageURL string) Action {
 		Environment: map[string]string{
 			"DEST_DISK":  destDisk,
 			"IMG_URL":    osImageURL,
-			"COMPRESSED": "true",
+			"COMPRESSED": "false",
 		},
 	}
 }

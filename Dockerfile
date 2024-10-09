@@ -12,18 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ARG GO_VERSION=1.23.1
-FROM docker.io/golang:${GO_VERSION} AS builder
-WORKDIR /go/src/k8c.io/machine-controller
-COPY . .
+#ARG GO_VERSION=1.23.1
+#FROM docker.io/golang:${GO_VERSION} AS builder
+#FROM build-harbor.alauda.cn/sync/library/golang:1.22-alpine AS builder
+FROM build-harbor.alauda.cn/ait/go-builder:1.22-alpine AS builder
+WORKDIR /src
+COPY . /src
 RUN make all
 
-FROM alpine:3.19
+FROM build-harbor.alauda.cn/ops/alpine:3.20
 
 RUN apk add --no-cache ca-certificates cdrkit
 
 COPY --from=builder \
-    /go/src/k8c.io/machine-controller/machine-controller \
-    /go/src/k8c.io/machine-controller/webhook \
+    /src/machine-controller \
+    /src/webhook \
     /usr/local/bin/
 USER nobody

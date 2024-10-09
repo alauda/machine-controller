@@ -1,6 +1,29 @@
 apiVersion: builds.katanomi.dev/v1alpha1
 kind: Build
 spec:
+  workspaces:
+    - description: |
+        This workspace is shared among all the pipeline tasks to read/write common resources
+      name: source
+  tasks:
+    - name: alauda-build-image
+      timeout: 30m
+      retries: 0
+      taskRef:
+        kind: ClusterTask
+        name: alauda-build-image
+      workspaces:
+        - name: source
+          workspace: source
+      when: []
+      params:
+        - name: container-image
+          value: build-harbor.alauda.cn/ait/ait/machine-controller
+        - name: container-image-tag
+          value: $(build.git.lastCommit.shortID)
+        - name: platform
+          value:
+            - linux/amd64
   git:
     options:
       depth: 1
@@ -13,19 +36,6 @@ spec:
         requests:
           cpu: 200m
           memory: 200Mi
-  templates:
-    - templateRef:
-        resolver: katanomi.dev.clustertemplate
-        params:
-          - name: name
-            value: go-build-v1
-      params:
-        - name: tool-image
-          value: registry.alauda.cn:60080/devops/builder-go:latest
-        - name: test-quality-gate
-          value: "false"
-        - name: sonar-server
-          value: https://build-sonar.alauda.cn
-        - name: container-images
-          value:
-            - build-harbor.alauda.cn/ait/ait/machine-controller:$(build.git.lastCommit.shortID)
+  runTemplate:
+    spec:
+      taskRunSpecs: []
